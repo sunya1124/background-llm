@@ -1,0 +1,41 @@
+#!/bin/bash
+
+PLIST="$HOME/Library/LaunchAgents/jp.claude.llama-server.plist"
+MODEL_PATH="/Users/watabe/documents/llama-models/Qwen3.6-35B-A3B-GGUF/Qwen3.6-35B-A3B-UD-Q4_K_M.gguf"
+MMPROJ_PATH="/Users/watabe/documents/llama-models/qwen3.6-35B-A3B-GGUF/mmproj-F32.gguf"
+
+# モデル名をファイル名から抽出（例: Qwen3.6-35B-A3B-UD-Q4_K_M.gguf → Qwen3.6-35B-A3B）
+MODEL_NAME=$(basename "$MODEL_PATH" .gguf | sed 's/-UD-Q[0-9]*_K_M$//')
+
+usage() {
+    echo "Usage: qwen [-s]"
+    echo "  (no args)  - Start LLM server"
+    echo "  -s         - Stop LLM server"
+    exit 1
+}
+
+is_running() {
+    lsof -i :1234 >/dev/null 2>&1
+}
+
+if [ "$1" = "-s" ]; then
+    # 停止
+    if is_running; then
+        launchctl unload "$PLIST" 2>/dev/null
+        echo "${MODEL_NAME}のllama-serverを停止したねり"
+    else
+        echo "${MODEL_NAME}のllama-serverは既に停止中ねり"
+    fi
+else
+    # 起動
+    if is_running; then
+        echo "${MODEL_NAME}のllama-serverは既に起動中ねり"
+    else
+        if [ ! -f "$MODEL_PATH" ]; then
+            echo "モデルファイルが見つからないねり: $MODEL_PATH"
+            exit 1
+        fi
+        launchctl load "$PLIST"
+        echo "${MODEL_NAME}のllama-serverを起動したねり"
+    fi
+fi
