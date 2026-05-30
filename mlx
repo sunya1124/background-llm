@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# mlx-vlm-server の起動・停止を管理するスクリプト
+
+PLIST="$HOME/Library/LaunchAgents/jp.claude.mlx-vlm-server.plist"
+MODEL_ID="mlx-community/Qwen3.6-35B-A3B-4bit"
+
+# ポート1235が使用中かチェック
+is_running() {
+    lsof -i :1235 >/dev/null 2>&1
+}
+
+# 引数チェック
+if [ "$1" = "-s" ]; then
+    # 停止
+    if is_running; then
+        launchctl unload "$PLIST" 2>/dev/null
+        echo "${MODEL_ID}のmlx-vlm-serverを停止したねり"
+    else
+        echo "${MODEL_ID}のmlx-vlm-serverは既に停止中ねり"
+    fi
+else
+    # 起動（引数なし or それ以外の引数）
+    if is_running; then
+        echo "${MODEL_ID}のmlx-vlm-serverは既に起動中ねり"
+    else
+        launchctl load "$PLIST"
+        echo "${MODEL_ID}のmlx-vlm-serverを起動したねり"
+        echo "http://localhost:1235"
+    fi
+fi
