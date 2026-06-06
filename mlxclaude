@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# oMLX起動 → Claude Code起動（Anthropic API エンドポイントを oMLX に切り替え）
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+export ANTHROPIC_BASE_URL=http://127.0.0.1:8000
+
+# oMLXサーバーを起動
+"$SCRIPT_DIR/mlx"
+
+# Claude Codeを起動
+claude

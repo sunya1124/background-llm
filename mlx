@@ -24,7 +24,8 @@ else
     if is_running; then
         echo "${MODEL_ID}のoMLXサーバーは既に起動中ねり"
     else
-        launchctl load "$PLIST"
+        launchctl bootout gui/$(id -u)/jp.claude.omlx-server 2>/dev/null
+        launchctl bootstrap gui/$(id -u) "$PLIST"
         echo "${MODEL_ID}のoMLXサーバーを起動したねり"
         echo "http://localhost:8000"
     fi
