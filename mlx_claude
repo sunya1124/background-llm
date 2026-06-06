@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# llamaサーバー停止 → oMLX起動 → Claude Code起動
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# llamaサーバーを停止
+"$SCRIPT_DIR/llama" -s
+
+# oMLXサーバーを起動
+"$SCRIPT_DIR/mlx"
+
+# Claude Codeを起動
+claude
